@@ -3,6 +3,7 @@ import axios from 'axios';
 import './QuickSearches.css'; // Import CSS styles for the QuickSearches component
 import { assets } from '../../assets/assets.js'; // Import assets
 import { Link } from 'react-router-dom'; // Import Link for routing
+import { apiUrl } from '../../config/api';
 
 const QuickSearches = () => {
   const [foodList, setFoodList] = useState([]); // State to hold the list of food items
@@ -10,7 +11,7 @@ const QuickSearches = () => {
   // Function to fetch food items from the server
   const getItems = async () => {
     try {
-      const response = await axios.get('http://localhost:3000/getItems', {
+      const response = await axios.get(apiUrl('/getItems'), {
         headers: {
           'Content-Type': 'application/json' // Specify content type for the request
         }

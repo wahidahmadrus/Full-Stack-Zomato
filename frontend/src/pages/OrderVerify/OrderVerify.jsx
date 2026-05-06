@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import './OrderVerify.css';
+import { apiUrl } from '../../config/api';
 
 const Verify = () => {
   const location = useLocation(); // Get the current location
@@ -17,7 +18,7 @@ const Verify = () => {
       if (!success) {
         try {
           // Delete the order if payment failed
-          await axios.delete(`http://localhost:3000/order/${orderId}`);
+          await axios.delete(apiUrl(`/order/${orderId}`));
         } catch (error) {
           console.error('Error deleting order:', error); // Log any error encountered
         }
@@ -26,7 +27,7 @@ const Verify = () => {
 
       try {
         // Fetch order details if payment was successful
-        const response = await axios.get(`http://localhost:3000/order/${orderId}`);
+        const response = await axios.get(apiUrl(`/order/${orderId}`));
         setOrder(response.data); // Update state with fetched order data
       } catch (error) {
         console.error('Error fetching order details:', error); // Log any error encountered

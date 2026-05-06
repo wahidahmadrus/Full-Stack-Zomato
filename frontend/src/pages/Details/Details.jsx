@@ -6,6 +6,7 @@ import { Tab, Tabs, TabList, TabPanel } from 'react-tabs'
 import { foodItemsImg } from '../../assets/assets.js'
 import { useLocation } from 'react-router-dom';
 import axios from 'axios';
+import { apiUrl } from '../../config/api';
 
 const Details = () => {
   const [tabIndex, setTabIndex] = useState(0); // Manage the currently selected tab
@@ -86,7 +87,7 @@ const Details = () => {
       subTotal
     }
     try {
-      const response = await axios.post('http://localhost:3000/order', orderData); // Send order data to the server
+      const response = await axios.post(apiUrl('/order'), orderData); // Send order data to the server
       if (response.data.success) {
         const { session_url } = response.data; // Get redirect URL from response
         window.location.replace(session_url); // Redirect user to payment session

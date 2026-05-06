@@ -4,11 +4,14 @@ import Modal from 'react-modal'; // Import Modal for pop-up dialogs
 import './User.css'; // Import CSS styles for the User component
 import { assets } from '../../assets/assets.js'; // Import assets
 import { GoogleLogin } from '@react-oauth/google'; // Import Google login component
-import FacebookLogin from '@greatsumini/react-facebook-login'; // Import Facebook login component
+import FacebookLoginModule from '@greatsumini/react-facebook-login'; // Import Facebook login component
 import { jwtDecode } from 'jwt-decode'; // Import jwtDecode for decoding JWT tokens
+import { apiUrl } from '../../config/api';
 
 // Set up the modal's root element for accessibility
 Modal.setAppElement('#root');
+
+const FacebookLogin = FacebookLoginModule.default ?? FacebookLoginModule;
 
 const User = ({ showUser, setShowUser, isLogin, setIsLogin, setShowProfile }) => {
 
@@ -32,14 +35,14 @@ const User = ({ showUser, setShowUser, isLogin, setIsLogin, setShowProfile }) =>
       let response;
       if (isLogin) {
         // Send login request
-        response = await axios.post('http://localhost:3000/login', data, {
+        response = await axios.post(apiUrl('/login'), data, {
           headers: {
             'Content-Type': 'application/json'
           }
         });
       } else {
         // Send signup request
-        response = await axios.post('http://localhost:3000/signup', data, {
+        response = await axios.post(apiUrl('/signup'), data, {
           headers: {
             'Content-Type': 'application/json'
           }

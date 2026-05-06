@@ -10,9 +10,24 @@ import Login from '../Model/Login.js'
 import Restaurant from '../Model/restaurants.js'
 import Order from '../Model/Order.js'
 
-const mongoUrl = "mongodb+srv://wahid:zomato111@cluster0.8pejkwc.mongodb.net/Zomato";
+const mongoUrl = process.env.MONGO_URL;
 const port = process.env.PORT || 3000;
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || 'sk_test_51PfGPoLyuYPCk0brxtM1exqBFm1lN8IJ3ioETn6QGH9ALFr7qfo9T3dBbe3KapoansVwUgSVAt3xk2G5jswNWXoJ005VZikr5G');
+const jwtSecret = process.env.SECRET_TOKEN;
+const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
+
+if (!mongoUrl) {
+  throw new Error('MONGO_URL environment variable is required');
+}
+
+if (!process.env.STRIPE_SECRET_KEY) {
+  throw new Error('STRIPE_SECRET_KEY environment variable is required');
+}
+
+if (!jwtSecret) {
+  throw new Error('SECRET_TOKEN environment variable is required');
+}
+
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 const app = express();
 
 app.use(bodyParser.json());
@@ -49,7 +64,7 @@ app.post('/signup', async (req, res) => {
       const newUser = new Login({ firstName, lastName, email, password: hashedPassword });
       await newUser.save();
 
-      const token = jwt.sign({ email }, process.env.SECRET_TOKEN || "token", { expiresIn: '1h' });
+      const token = jwt.sign({ email }, jwtSecret, { expiresIn: '1h' });
 
       res.status(201).json({ token, user: firstName, message: 'User registered successfully.' });
     } catch (error) {
@@ -65,7 +80,7 @@ app.post('/login', async (req, res) => {
     
     // Check if user exists and password is correct
     if (user && await bcrypt.compare(password, user.password)) {
-        const token = jwt.sign({ email }, process.env.SECRET_TOKEN || "token", { expiresIn: '1h' });
+        const token = jwt.sign({ email }, jwtSecret, { expiresIn: '1h' });
         res.json({ token: token, user: user.firstName });
     } else {
         res.status(401).json({ error: 'Incorrect email or password' });
@@ -107,8 +122,8 @@ app.post('/order', async (req, res) => {
         },
       ],
       mode: 'payment',
-      success_url: `http://localhost:5173/verify?success=true&orderId=${newOrder._id}`,
-      cancel_url: `http://localhost:5173/verify?success=false&orderId=${newOrder._id}`,
+      success_url: `${frontendUrl}/verify?success=true&orderId=${newOrder._id}`,
+      cancel_url: `${frontendUrl}/verify?success=false&orderId=${newOrder._id}`,
     });
 
     res.status(201).json({ success: true, session_url: session.url });

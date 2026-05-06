@@ -3,6 +3,7 @@ import './Filter.css';
 import FilteredItemsPages from '../../components/FilteredItemsPages/FilteredItemsPages';
 import axios from 'axios';
 import { useLocation } from 'react-router-dom';
+import { apiUrl } from '../../config/api';
 
 const Filter = () => {
   const [restaurants, setRestaurants] = useState([]); // State to hold all restaurants
@@ -23,7 +24,7 @@ const Filter = () => {
     // Fetch restaurant data from the server
     const fetchRestaurants = async () => {
       try {
-        const response = await axios.get('http://localhost:3000/getRestaurants', {
+        const response = await axios.get(apiUrl('/getRestaurants'), {
           headers: {
             'Content-Type': 'application/json',
           },

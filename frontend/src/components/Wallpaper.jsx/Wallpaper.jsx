@@ -3,6 +3,7 @@ import './Wallpaper.css'; // Import component-specific styles
 import { assets, foodItemsImg } from '../../assets/assets'; // Import assets
 import axios from 'axios';
 import { Link } from 'react-router-dom'; // Import Link for navigation
+import { apiUrl } from '../../config/api';
 
 const Wallpaper = () => {
   const [restaurants, setRestaurants] = useState([]); // State for all restaurants
@@ -14,7 +15,7 @@ const Wallpaper = () => {
   useEffect(() => {
     const fetchRestaurants = async () => {
       try {
-        const response = await axios.get('http://localhost:3000/getRestaurants', {
+        const response = await axios.get(apiUrl('/getRestaurants'), {
           headers: {
             'Content-Type': 'application/json',
           },
