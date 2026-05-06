@@ -5,10 +5,42 @@ import mongoose from 'mongoose'
 import jwt from 'jsonwebtoken'
 import bcrypt from 'bcrypt'
 import Stripe from 'stripe'
+import fs from 'fs'
+import path from 'path'
+import { fileURLToPath } from 'url'
 import Item from '../Model/QuickSearchesSchema.js'
 import Login from '../Model/Login.js'
 import Restaurant from '../Model/restaurants.js'
 import Order from '../Model/Order.js'
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const envPath = path.resolve(__dirname, '../.env');
+
+if (fs.existsSync(envPath)) {
+  const envFile = fs.readFileSync(envPath, 'utf8');
+
+  envFile.split(/\r?\n/).forEach((line) => {
+    const trimmedLine = line.trim();
+
+    if (!trimmedLine || trimmedLine.startsWith('#')) {
+      return;
+    }
+
+    const separatorIndex = trimmedLine.indexOf('=');
+
+    if (separatorIndex === -1) {
+      return;
+    }
+
+    const key = trimmedLine.slice(0, separatorIndex).trim();
+    const value = trimmedLine.slice(separatorIndex + 1).trim();
+
+    if (key && process.env[key] === undefined) {
+      process.env[key] = value;
+    }
+  });
+}
 
 const mongoUrl = process.env.MONGO_URL;
 const port = process.env.PORT || 3000;
